@@ -1,4 +1,4 @@
-﻿using BTD_Mod_Helper;
+using BTD_Mod_Helper;
 using MelonLoader;
 using AscendedBosses;
 using Il2CppAssets.Scripts.Models;
@@ -31,6 +31,10 @@ using System.IO;
 using UnityEngine.UI;
 using MelonLoader.Utils;
 using Il2CppAssets.Scripts.Data.GameEditor;
+using BTD_Mod_Helper.Api.Hooks.BloonHooks;
+using BTD_Mod_Helper.Api.Hooks;
+using Il2Cpp;
+using Il2CppAssets.Scripts.Simulation.Towers.Projectiles;
 
 [assembly: MelonInfo(typeof(AscendedBosses.AscendedBosses), ModHelperData.Name, ModHelperData.Version, ModHelperData.RepoOwner)]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
@@ -60,7 +64,6 @@ public class AscendedBosses : BloonsTD6Mod
     public override void OnMainMenu()
     {
     }
-
 
     public override void OnNewGameModel(GameModel result)
     {
@@ -1068,56 +1071,55 @@ public class AscendedBosses : BloonsTD6Mod
         }
     }
 
-    [HarmonyPatch(typeof(Bloon), nameof(Bloon.PreCheckDamageOutcome))]
-    public class HandleBossDamage_Patch
+    [HookTarget(typeof(BloonDamageHook), HookTargetAttribute.EHookType.Postfix)]
+    [HookPriority(HookPriorityAttribute.Higher)]
+    public static bool BloonDamagePostfix(Bloon @this, ref float totalAmount, Projectile projectile, ref bool distributeToChildren,ref bool overrideDistributeBlocker, ref bool createEffect, Tower tower, BloonProperties immuneBloonProperties,BloonProperties originalImmuneBloonProperties, ref bool canDestroyProjectile, ref bool ignoreNonTargetable, ref bool blockSpawnChildren, HookNullable<int> powerActivatedByPlayerId)
     {
-        [HarmonyPostfix]
-        public static void Postfix(Bloon __instance)
+        if (new System.Random().Next(0) == 0)
         {
-            if (new System.Random().Next(0) == 0)
+            if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Sun>())
             {
-                if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Sun>())
-                {
-                    HelpGoodBossUI.orbs += 1;
-                }
-                if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Evil>())
-                {
-                    HelpGoodBossUI.orbs += 1;
-                }
+                HelpGoodBossUI.orbs += 1;
             }
-            if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Sun>())
+            if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Evil>())
             {
-                FinalBossUI.HandleUI(__instance, true);
-            }
-            else if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Evil>())
-            {
-                FinalBossUI.HandleUI(__instance, false);
-            }
-            else if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedBloonarius>())
-            {
-                BossUI.HandleUI(__instance);
-            }
-            else if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedVortex>())
-            {
-                BossUI.HandleUI(__instance);
-            }
-            else if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedLych>())
-            {
-                BossUI.HandleUI(__instance);
-            }
-            else if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedPhayze>())
-            {
-                BossUI.HandleUI(__instance);
-            }
-            else if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedBlast>())
-            {
-                BossUI.HandleUI(__instance);
-            }
-            else if (__instance.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedDread>())
-            {
-                BossUI.HandleUI(__instance);
+                HelpGoodBossUI.orbs += 1;
             }
         }
+        if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Sun>())
+        {
+            FinalBossUI.HandleUI(@this, true);
+        }
+        else if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.Evil>())
+        {
+            FinalBossUI.HandleUI(@this, false);
+        }
+        else if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedBloonarius>())
+        {
+            BossUI.HandleUI(@this);
+        }
+        else if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedVortex>())
+        {
+            BossUI.HandleUI(@this);
+        }
+        else if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedLych>())
+        {
+            BossUI.HandleUI(@this);
+        }
+        else if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedPhayze>())
+        {
+            BossUI.HandleUI(@this);
+        }
+        else if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedBlast>())
+        {
+            BossUI.HandleUI(@this);
+        }
+        else if (@this.bloonModel.baseId == ModContent.BloonID<AscendedBosses.AscendedDread>())
+        {
+            BossUI.HandleUI(@this);
+        }
+
+        return true;
     }
 
     [HarmonyPatch(typeof(Bloon), nameof(Bloon.OnDestroy))]
