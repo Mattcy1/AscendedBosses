@@ -681,10 +681,6 @@ public class AscendedBosses : BloonsTD6Mod
                     MelonCoroutines.Start(LoadMoab(bloon));
                     bloon.UpdateDisplay();
                 }
-                else if(bloon != null && !bloon.bloonModel.isMoab && bloon.HasTag("Cursed"))
-                {
-                    MelonCoroutines.Start(Ext.LoadBloon(bloon)); 
-                }
             }
         }
     }
@@ -1174,47 +1170,6 @@ public class AscendedBosses : BloonsTD6Mod
 
 public static class Ext
 {
-    private static Sprite sprite1;
-
-    public static System.Collections.IEnumerator LoadBloon(Bloon bloon)
-    {
-        yield return new WaitForSeconds((0.3f));
-
-        Texture2D tex = ModContent.GetTexture<AscendedBosses>("CorruptedOverlay");
-        if (!bloon.bloonModel.baseId.Contains("White") && !bloon.bloonModel.baseId.Contains("Black"))
-        {
-            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 11.8f);
-            sprite1 = sprite;
-        }
-        else
-        {
-            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width / 2, tex.height / 2), new Vector2(0.5f, 0.5f), 11.8f);
-            sprite1 = sprite;
-        }
-
-        var graphic = bloon?.Display?.node?.Graphic;
-        if (graphic == null)
-        {
-            yield break;
-        }
-
-        GameObject overlayObj = new GameObject("CursedOverlay" + bloon.Id);
-        overlayObj.transform.SetParent(graphic.transform, false); 
-        overlayObj.transform.localPosition = Vector3.zero;
-
-        SpriteRenderer newRenderer = overlayObj.AddComponent<SpriteRenderer>();
-        newRenderer.sprite = sprite1;
-
-        SpriteRenderer original = graphic.GetComponent<SpriteRenderer>();
-        if (original != null)
-        {
-            newRenderer.material = original.material;
-            newRenderer.sortingLayerID = original.sortingLayerID;
-            newRenderer.sortingOrder = original.sortingOrder + 1;
-        } 
-    }
-
-
     public static void BecomeCursed(this Bloon bloon)
     {
         bloon.bloonModel.AddTag("Cursed");
