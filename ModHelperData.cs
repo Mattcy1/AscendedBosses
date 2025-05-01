@@ -3,7 +3,7 @@
 public static class ModHelperData
 {
     public const string WorksOnVersion = "48.2";
-    public const string Version = "1.0.1";
+    public const string Version = "1.0.2";
     public const string Name = "AscendedBosses";
 
     public const string Description = "An empty mod";
